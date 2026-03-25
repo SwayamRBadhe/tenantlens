@@ -67,3 +67,7 @@ dist/
 *.pem
 *.key
 secrets/
+
+# Application properties with secrets
+user-service/src/main/resources/application.properties
+property-service/src/main/resources/application.properties
