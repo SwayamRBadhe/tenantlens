@@ -74,3 +74,6 @@ property-service/src/main/resources/application.properties
 
 # Build output
 user-service/target/
+
+# Property Service build output
+property-service/target/
