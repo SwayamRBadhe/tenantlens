@@ -77,3 +77,7 @@ user-service/target/
 
 # Property Service build output
 property-service/target/
+
+# Intelligence Service
+intelligence-service/venv/
+intelligence-service/.env
