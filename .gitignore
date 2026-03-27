@@ -81,3 +81,9 @@ property-service/target/
 # Intelligence Service
 intelligence-service/venv/
 intelligence-service/.env
+
+intelligence-service/__pycache__/
+intelligence-service/app/__pycache__/
+intelligence-service/app/routers/__pycache__/
+intelligence-service/app/services/__pycache__/
+intelligence-service/app/models/__pycache__/    
