@@ -87,3 +87,7 @@ intelligence-service/app/__pycache__/
 intelligence-service/app/routers/__pycache__/
 intelligence-service/app/services/__pycache__/
 intelligence-service/app/models/__pycache__/    
+
+# Frontend
+frontend/node_modules/
+frontend/build/
