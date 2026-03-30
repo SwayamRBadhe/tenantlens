@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import Navbar from '../components/Navbar';
 import { analyzeProperty } from '../services/api';
 
@@ -10,6 +11,8 @@ function Analyze() {
     const [error, setError] = useState('');
     const [copied, setCopied] = useState(false);
     const [tooltip, setTooltip] = useState(null);
+
+    const [mapCoords, setMapCoords] = useState(null);
 
     const userEmail = localStorage.getItem('userEmail');
     const location = useLocation();
@@ -33,6 +36,15 @@ function Analyze() {
         try {
             const response = await analyzeProperty({ address, userEmail });
             setResult(response.data);
+
+            // Geocode the address using Nominatim
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+            const geoData = await geoRes.json();
+            if (geoData.length > 0) {
+                const lat = parseFloat(geoData[0].lat);
+                const lon = parseFloat(geoData[0].lon);
+                setMapCoords({ lat, lon });
+            }
         } catch (err) {
             setError('Failed to analyze property. Please try again.');
         }
@@ -51,6 +63,7 @@ function Analyze() {
         setResult(null);
         setAddress('');
         setError('');
+        setMapCoords(null);
     };
 
     const getScoreColor = (score) => {
@@ -172,7 +185,9 @@ function Analyze() {
                                 {/* AI Report */}
                                 <div className="border-t border-gray-100 pt-4">
                                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">AI Report</p>
-                                    <p className="text-gray-700 text-sm leading-relaxed">{result.aiReport}</p>
+                                    <div className="text-gray-700 text-sm leading-relaxed prose prose-sm max-w-none">
+                                        <ReactMarkdown>{result.aiReport}</ReactMarkdown>
+                                    </div>
                                 </div>
                             </div>
 
@@ -204,9 +219,12 @@ function Analyze() {
                         </div>
                         <iframe
                             title="Property Map"
-                            src="https://www.openstreetmap.org/export/embed.html?bbox=-76.2474%2C42.9481%2C-76.0474%2C43.1481&layer=mapnik"
+                            src={mapCoords
+                                ? `https://www.openstreetmap.org/export/embed.html?bbox=${mapCoords.lon - 0.01}%2C${mapCoords.lat - 0.01}%2C${mapCoords.lon + 0.01}%2C${mapCoords.lat + 0.01}&layer=mapnik&marker=${mapCoords.lat}%2C${mapCoords.lon}`
+                                : `https://www.openstreetmap.org/export/embed.html?bbox=-76.2474%2C42.9481%2C-76.0474%2C43.1481&layer=mapnik`
+                            }
                             width="100%"
-                            style={{ border: 'none', height: 'calc(100vh - 130px)' }}
+                            style={{ border: 'none', height: 'calc(100vh - 220px)' }}
                         />
                     </div>
                 </div>
